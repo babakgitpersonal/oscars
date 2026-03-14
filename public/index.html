@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Oscar Party 2026</title>
+  <style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #e8e8e8; min-height: 100vh; }
+.container { max-width: 800px; margin: 0 auto; padding: 20px; }
+header { text-align: center; padding: 30px 0 10px; }
+header h1 { font-size: 2.5rem; color: #d4af37; text-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+.subtitle { color: #888; font-size: 1.1rem; margin-top: 5px; }
+.screen.hidden { display: none; }
+.login-box { max-width: 400px; margin: 60px auto; background: #1a1a1a; padding: 40px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+.login-box h2 { margin-bottom: 20px; color: #d4af37; }
+.login-box input { width: 100%; padding: 12px 16px; font-size: 1rem; border: 1px solid #444; border-radius: 8px; background: #222; color: #fff; margin-bottom: 15px; }
+.login-box input:focus { outline: none; border-color: #d4af37; }
+.divider { display: flex; align-items: center; margin: 20px 0; color: #555; }
+.divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #333; }
+.divider span { padding: 0 12px; font-size: 0.85rem; }
+.btn { display: inline-block; padding: 10px 24px; font-size: 0.95rem; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+.btn-primary { background: #d4af37; color: #000; width: 100%; }
+.btn-primary:hover { background: #e6c54b; }
+.btn-secondary { background: #2a2a2a; color: #ccc; border: 1px solid #444; }
+.btn-secondary:hover { background: #333; }
+.btn-lock { background: #c0392b; color: #fff; }
+.btn-lock:hover { background: #e74c3c; }
+.btn-lock:disabled { background: #555; cursor: not-allowed; }
+.ballot-header { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #333; }
+.ballot-header h2 { color: #d4af37; flex: 1; min-width: 200px; }
+.ballot-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.lock-status { width: 100%; font-size: 0.9rem; padding: 8px 12px; border-radius: 6px; font-weight: 600; }
+.lock-status.locked { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.3); }
+.lock-status.unlocked { background: rgba(241, 196, 15, 0.15); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.3); }
+.category-card { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; margin-bottom: 16px; overflow: hidden; }
+.category-title { padding: 14px 18px; font-size: 1.1rem; font-weight: 700; color: #d4af37; background: #151515; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 10px; }
+.category-result { font-size: 0.8rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.category-result.correct { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+.category-result.incorrect { background: rgba(231, 76, 60, 0.2); color: #e74c3c; }
+.category-result.pending { background: rgba(149, 165, 166, 0.2); color: #95a5a6; }
+.nominee-list { padding: 8px; }
+.nominee, .admin-nominee { padding: 10px 14px; border-radius: 8px; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 10px; font-size: 0.95rem; }
+.nominee:hover, .admin-nominee:hover { background: #252525; }
+.nominee.selected { background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); }
+.nominee.disabled { cursor: default; opacity: 0.7; }
+.nominee.disabled:hover { background: transparent; }
+.nominee.disabled.selected:hover { background: rgba(212, 175, 55, 0.15); }
+.nominee.winner-highlight { background: rgba(46, 204, 113, 0.12); border: 1px solid rgba(46, 204, 113, 0.3); }
+.nominee.wrong-highlight { background: rgba(231, 76, 60, 0.08); opacity: 0.5; }
+.nominee .radio, .admin-nominee .radio { width: 18px; height: 18px; border: 2px solid #555; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+.nominee.selected .radio { border-color: #d4af37; }
+.nominee.selected .radio::after { content: ''; width: 10px; height: 10px; background: #d4af37; border-radius: 50%; }
+.nominee.winner-highlight .radio { border-color: #2ecc71; }
+.nominee.winner-highlight .radio::after, .admin-nominee.selected .radio::after { content: ''; width: 10px; height: 10px; background: #2ecc71; border-radius: 50%; }
+.admin-nominee.selected { background: rgba(46, 204, 113, 0.15); border: 1px solid rgba(46, 204, 113, 0.4); }
+.admin-nominee.selected .radio { border-color: #2ecc71; }
+#admin-users { margin-bottom: 30px; }
+#admin-users h3, #admin-screen h3 { color: #d4af37; margin-bottom: 12px; }
+#users-list { display: grid; gap: 8px; }
+.user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: #1a1a1a; border-radius: 8px; border: 1px solid #333; }
+.user-row .status { font-size: 0.85rem; font-weight: 600; padding: 3px 10px; border-radius: 20px; }
+.user-row .status.locked { background: rgba(46, 204, 113, 0.2); color: #2ecc71; }
+.user-row .status.unlocked { background: rgba(241, 196, 15, 0.2); color: #f1c40f; }
+.scoreboard { background: #1a1a1a; border-radius: 12px; border: 1px solid #333; overflow: hidden; }
+.scoreboard-row { display: flex; align-items: center; padding: 14px 20px; border-bottom: 1px solid #252525; }
+.scoreboard-row:last-child { border-bottom: none; }
+.scoreboard-row.header { background: #151515; font-weight: 700; color: #888; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+.scoreboard-rank { width: 50px; font-weight: 700; color: #d4af37; font-size: 1.2rem; }
+.scoreboard-row.header .scoreboard-rank, .scoreboard-row.header .scoreboard-score { font-size: 0.85rem; color: #888; }
+.scoreboard-name { flex: 1; font-weight: 600; }
+.scoreboard-score { width: 80px; text-align: right; font-weight: 700; font-size: 1.1rem; color: #d4af37; }
+.no-scores { text-align: center; padding: 40px; color: #666; }
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); padding: 12px 24px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; z-index: 1000; animation: fadeInUp 0.3s ease; }
+.toast.success { background: #2ecc71; color: #000; }
+.toast.error { background: #e74c3c; color: #fff; }
+@keyframes fadeInUp { from { opacity: 0; transform: translateX(-50%) translateY(10px); } to { opacity: 1; transform: translateX(-50%) translateY(0); } }
+@media (max-width: 600px) { header h1 { font-size: 1.8rem; } .container { padding: 12px; } .ballot-header { flex-direction: column; align-items: stretch; } .ballot-actions { justify-content: center; } .login-box { margin: 30px auto; padding: 24px; } }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Oscar Party 2026</h1>
+      <p class="subtitle">Pick your winners!</p>
+    </header>
+
+    <div id="login-screen" class="screen">
+      <div class="login-box">
+        <h2>Enter Your Name</h2>
+        <input type="text" id="name-input" placeholder="Your name" autocomplete="off">
+        <button id="join-btn" class="btn btn-primary">Join</button>
+        <div class="divider"><span>or</span></div>
+        <button id="admin-btn" class="btn btn-secondary">Admin Mode</button>
+        <button id="scoreboard-btn" class="btn btn-secondary">View Scoreboard</button>
+      </div>
+    </div>
+
+    <div id="admin-login-screen" class="screen hidden">
+      <div class="login-box">
+        <h2>Admin Login</h2>
+        <input type="password" id="admin-password" placeholder="Password">
+        <button id="admin-login-btn" class="btn btn-primary">Login</button>
+        <button id="admin-back-btn" class="btn btn-secondary">Back</button>
+      </div>
+    </div>
+
+    <div id="ballot-screen" class="screen hidden">
+      <div class="ballot-header">
+        <h2>Welcome, <span id="user-display-name"></span>!</h2>
+        <div id="lock-status" class="lock-status"></div>
+        <div class="ballot-actions">
+          <button id="save-btn" class="btn btn-primary">Save Progress</button>
+          <button id="lock-btn" class="btn btn-lock">Lock In Guesses</button>
+          <button id="refresh-btn" class="btn btn-secondary">Refresh Results</button>
+          <button id="scoreboard-btn-2" class="btn btn-secondary">Scoreboard</button>
+          <button id="logout-btn" class="btn btn-secondary">Logout</button>
+        </div>
+      </div>
+      <div id="ballot-categories"></div>
+    </div>
+
+    <div id="admin-screen" class="screen hidden">
+      <div class="ballot-header">
+        <h2>Admin Panel</h2>
+        <div class="ballot-actions">
+          <button id="admin-logout-btn" class="btn btn-secondary">Logout</button>
+        </div>
+      </div>
+      <div id="admin-users">
+        <h3>Guests</h3>
+        <div id="users-list"></div>
+      </div>
+      <h3>Set Winners</h3>
+      <div id="admin-categories"></div>
+    </div>
+
+    <div id="scoreboard-screen" class="screen hidden">
+      <div class="ballot-header">
+        <h2>Scoreboard</h2>
+        <div class="ballot-actions">
+          <button id="scoreboard-back-btn" class="btn btn-secondary">Back</button>
+        </div>
+      </div>
+      <div id="scoreboard-table"></div>
+    </div>
+  </div>
+
+  <script>
+const API = '';
+let currentUser = null, adminPassword = null, nominations = {}, userGuesses = {}, userLocked = false, winners = {};
+const screens = { login: document.getElementById('login-screen'), adminLogin: document.getElementById('admin-login-screen'), ballot: document.getElementById('ballot-screen'), admin: document.getElementById('admin-screen'), scoreboard: document.getElementById('scoreboard-screen') };
+function showScreen(name) { Object.values(screens).forEach(s => s.classList.add('hidden')); screens[name].classList.remove('hidden'); }
+function toast(msg, type = 'success') { const el = document.createElement('div'); el.className = `toast ${type}`; el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 2500); }
+async function api(path, opts = {}) { const res = await fetch(API + path, { headers: { 'Content-Type': 'application/json' }, ...opts, body: opts.body ? JSON.stringify(opts.body) : undefined }); const data = await res.json(); if (!res.ok) throw new Error(data.error || 'Request failed'); return data; }
+
+document.getElementById('join-btn').addEventListener('click', async () => { const name = document.getElementById('name-input').value.trim(); if (!name) return; currentUser = name; await loadNominations(); await loadUserData(); await loadWinners(); renderBallot(); showScreen('ballot'); });
+document.getElementById('name-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('join-btn').click(); });
+document.getElementById('admin-btn').addEventListener('click', () => showScreen('adminLogin'));
+document.getElementById('admin-back-btn').addEventListener('click', () => showScreen('login'));
+document.getElementById('admin-login-btn').addEventListener('click', async () => { const pw = document.getElementById('admin-password').value; try { adminPassword = pw; await api(`/api/admin/users?password=${encodeURIComponent(pw)}`); await loadNominations(); await loadWinners(); renderAdmin(); showScreen('admin'); } catch (e) { adminPassword = null; toast('Wrong password', 'error'); } });
+document.getElementById('admin-password').addEventListener('keydown', (e) => { if (e.key === 'Enter') document.getElementById('admin-login-btn').click(); });
+document.getElementById('scoreboard-btn').addEventListener('click', () => showScoreboard('login'));
+document.getElementById('scoreboard-btn-2').addEventListener('click', () => showScoreboard('ballot'));
+document.getElementById('logout-btn').addEventListener('click', () => { currentUser = null; userGuesses = {}; userLocked = false; showScreen('login'); });
+document.getElementById('admin-logout-btn').addEventListener('click', () => { adminPassword = null; showScreen('login'); });
+
+async function loadNominations() { nominations = await api('/api/nominations'); }
+async function loadWinners() { winners = await api('/api/winners'); }
+async function loadUserData() { try { const data = await api(`/api/user/${encodeURIComponent(currentUser.toLowerCase().trim())}`); userGuesses = data.guesses || {}; userLocked = data.locked || false; } catch { userGuesses = {}; userLocked = false; } }
+
+function renderBallot() {
+  document.getElementById('user-display-name').textContent = currentUser;
+  const lockStatus = document.getElementById('lock-status'), saveBtn = document.getElementById('save-btn'), lockBtn = document.getElementById('lock-btn');
+  if (userLocked) { lockStatus.textContent = 'Your guesses are locked in!'; lockStatus.className = 'lock-status locked'; saveBtn.style.display = 'none'; lockBtn.style.display = 'none'; }
+  else { lockStatus.textContent = 'Your guesses are NOT locked yet. Save and lock before the show starts!'; lockStatus.className = 'lock-status unlocked'; saveBtn.style.display = ''; lockBtn.style.display = ''; }
+  const container = document.getElementById('ballot-categories'); container.innerHTML = '';
+  for (const [category, nominees] of Object.entries(nominations)) {
+    const card = document.createElement('div'); card.className = 'category-card';
+    const winner = winners[category], guess = userGuesses[category];
+    let resultBadge = '';
+    if (userLocked && winner) { resultBadge = guess === winner ? '<span class="category-result correct">Correct!</span>' : '<span class="category-result incorrect">Incorrect</span>'; }
+    else if (userLocked && !winner) { resultBadge = '<span class="category-result pending">Awaiting result</span>'; }
+    card.innerHTML = `<div class="category-title">${category} ${resultBadge}</div><div class="nominee-list">${nominees.map(n => {
+      const isSelected = guess === n, isWinner = winner === n, isWrong = userLocked && winner && isSelected && !isWinner;
+      let cls = 'nominee'; if (isSelected) cls += ' selected'; if (userLocked) cls += ' disabled'; if (userLocked && isWinner) cls += ' winner-highlight'; if (isWrong) cls += ' wrong-highlight';
+      return `<div class="${cls}" data-category="${category}" data-nominee="${n}"><div class="radio"></div><span>${n}${userLocked && isWinner ? ' ★' : ''}</span></div>`;
+    }).join('')}</div>`;
+    container.appendChild(card);
+  }
+  if (!userLocked) { container.querySelectorAll('.nominee').forEach(el => { el.addEventListener('click', () => { userGuesses[el.dataset.category] = el.dataset.nominee; renderBallot(); }); }); }
+}
+
+document.getElementById('save-btn').addEventListener('click', async () => { try { await api(`/api/user/${encodeURIComponent(currentUser.toLowerCase().trim())}/guesses`, { method: 'POST', body: { displayName: currentUser, guesses: userGuesses } }); toast('Progress saved!'); } catch (e) { toast(e.message, 'error'); } });
+document.getElementById('lock-btn').addEventListener('click', async () => {
+  const total = Object.keys(nominations).length, filled = Object.keys(userGuesses).length;
+  let msg = 'Are you sure you want to lock your guesses? You cannot change them after this.';
+  if (filled < total) msg = `You've only picked ${filled} of ${total} categories. Lock anyway?`;
+  if (!confirm(msg)) return;
+  try { await api(`/api/user/${encodeURIComponent(currentUser.toLowerCase().trim())}/guesses`, { method: 'POST', body: { displayName: currentUser, guesses: userGuesses } }); await api(`/api/user/${encodeURIComponent(currentUser.toLowerCase().trim())}/lock`, { method: 'POST', body: {} }); userLocked = true; toast('Guesses locked in!'); renderBallot(); } catch (e) { toast(e.message, 'error'); }
+});
+document.getElementById('refresh-btn').addEventListener('click', async () => { await loadWinners(); renderBallot(); toast('Results refreshed!'); });
+
+async function renderAdmin() {
+  const users = await api(`/api/admin/users?password=${encodeURIComponent(adminPassword)}`);
+  const usersList = document.getElementById('users-list');
+  usersList.innerHTML = users.length === 0 ? '<div class="no-scores">No guests yet</div>' : users.map(u => `<div class="user-row"><span>${u.name}</span><span class="status ${u.locked ? 'locked' : 'unlocked'}">${u.locked ? 'Locked' : 'Not locked'}</span></div>`).join('');
+  const container = document.getElementById('admin-categories'); container.innerHTML = '';
+  for (const [category, nominees] of Object.entries(nominations)) {
+    const card = document.createElement('div'); card.className = 'category-card';
+    card.innerHTML = `<div class="category-title">${category}</div><div class="nominee-list">${nominees.map(n => `<div class="admin-nominee ${winners[category] === n ? 'selected' : ''}" data-category="${category}" data-nominee="${n}"><div class="radio"></div><span>${n}</span></div>`).join('')}</div>`;
+    container.appendChild(card);
+  }
+  container.querySelectorAll('.admin-nominee').forEach(el => { el.addEventListener('click', async () => { try { await api('/api/admin/winner', { method: 'POST', body: { password: adminPassword, category: el.dataset.category, winner: el.dataset.nominee } }); winners[el.dataset.category] = el.dataset.nominee; toast(`Winner set: ${el.dataset.nominee}`); renderAdmin(); } catch (e) { toast(e.message, 'error'); } }); });
+}
+
+let scoreboardReturnTo = 'login';
+async function showScoreboard(returnTo) {
+  scoreboardReturnTo = returnTo;
+  const scores = await api('/api/scoreboard');
+  const container = document.getElementById('scoreboard-table');
+  container.innerHTML = scores.length === 0 ? '<div class="no-scores">No locked-in guesses yet. Scores appear once guests lock their picks.</div>' :
+    `<div class="scoreboard"><div class="scoreboard-row header"><div class="scoreboard-rank">#</div><div class="scoreboard-name">Guest</div><div class="scoreboard-score">Score</div></div>${scores.map((s, i) => `<div class="scoreboard-row"><div class="scoreboard-rank">${i + 1}</div><div class="scoreboard-name">${s.name}</div><div class="scoreboard-score">${s.correct}/${s.total}</div></div>`).join('')}</div>`;
+  showScreen('scoreboard');
+}
+document.getElementById('scoreboard-back-btn').addEventListener('click', () => { if (scoreboardReturnTo === 'ballot' && currentUser) { renderBallot(); showScreen('ballot'); } else { showScreen('login'); } });
+  </script>
+</body>
+</html>
