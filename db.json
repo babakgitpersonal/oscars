@@ -1,0 +1,41 @@
+{
+  "users": {
+    "ben": {
+      "displayName": "Ben",
+      "guesses": {
+        "Best Picture": "Hamnet",
+        "Best Actor": "Michael B Jordan - Sinners",
+        "Best Actress": "Jessie Buckley - Hamnet",
+        "Best Supporting Actress": "Teyana Taylor - One Battle After Another",
+        "Best Supporting Actor": "Benicio del Toro - One Battle After Another",
+        "Best Director": "Ryan Coogler - Sinners",
+        "Best Adapted Screenplay": "Hamnet",
+        "Best Original Screenplay": "Sinners",
+        "Best Original Song": "Golden - KPop Demon Hunters",
+        "Best Original Score": "Sinners",
+        "Best International Feature": "It Was Just an Accident",
+        "Best Animated Feature": "KPop Demon Hunters",
+        "Best Documentary Feature": "Come See Me in the Good Light",
+        "Best Costume Design": "Hamnet",
+        "Best Make-Up and Hairstyling": "Frankenstein",
+        "Best Production Design": "Hamnet",
+        "Best Sound": "F1",
+        "Best Film Editing": "One Battle After Another",
+        "Best Cinematography": "Frankenstein",
+        "Best Visual Effects": "Jurassic World Rebirth",
+        "Best Live Action Short": "The Singers",
+        "Best Animated Short": "The Three Sisters",
+        "Best Documentary Short": "The Devil Is Busy",
+        "Best Casting": "Hamnet"
+      },
+      "locked": true
+    }
+  },
+  "winners": {
+    "Best Picture": "Hamnet",
+    "Best Actor": "Michael B Jordan - Sinners",
+    "Best Supporting Actress": "Teyana Taylor - One Battle After Another",
+    "Best Supporting Actor": "Jacob Elordi - Frankenstein",
+    "Best Actress": "Rose Byrne - If I Had Legs I'd Kick You"
+  }
+}
